@@ -1,1 +1,13 @@
 # otus-java-2018-08-vip
+
+Примеры для курса "Разработчик Java" в OTUS
+Группа 2018-08
+
+Преподаватели
+Vitaly Chibrikov (Виталий Чибриков)
+
+chibrikov@otus.ru
+
+Vladimir Sonkin (Владимир Сонькин)
+
+vladson@ya.ru
