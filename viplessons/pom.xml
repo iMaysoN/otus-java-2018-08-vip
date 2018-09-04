@@ -97,7 +97,7 @@
                             <outjar>${project.build.finalName}-obf.jar</outjar>
 
                             <options>
-                                <option>-keep public class ru.otus.L20180801.Main</option>
+                                <option>-keep public class ru.otus.L20180801.Main {public static void main(java.lang.String[]);}</option>
                                 <option>-dontwarn</option>
                             </options>
                         </configuration>
