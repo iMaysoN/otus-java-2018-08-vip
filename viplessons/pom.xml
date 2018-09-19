@@ -93,14 +93,17 @@
                         </goals>
                         <configuration>
                             <proguardVersion>${tool.proguard.version}</proguardVersion>
+                            <injar>${project.build.finalName}.jar</injar>
+                            <includeDependencyInjar>true</includeDependencyInjar>
                             <obfuscate>true</obfuscate>
                             <outjar>${project.build.finalName}-obf.jar</outjar>
-
                             <options>
                                 <option>-keep public class ru.otus.L20180801.Main {public static void main(java.lang.String[]);}</option>
                                 <option>-dontwarn</option>
+                                <option>-keepattributes Signature</option>
                             </options>
                         </configuration>
+
                     </execution>
                 </executions>
             </plugin>
