@@ -4,7 +4,7 @@ import tests.MyAfter;
 import tests.MyBefore;
 import tests.MyTest;
 
-public class SecondTest {
+public class FailedTest {
 
     private int sum;
 
