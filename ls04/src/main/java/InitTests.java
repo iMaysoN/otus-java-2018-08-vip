@@ -76,9 +76,6 @@ public class InitTests {
     }
 
     private static void runTestsInTestClass(final Class<?> testClass) throws IllegalAccessException, InvocationTargetException, InstantiationException {
-        final Object testClassAsObject;
-        testClassAsObject = testClass.getDeclaredConstructors()[0].newInstance();
-
         List<Method> beforeMethods = Stream.of(testClass.getMethods())
                 .filter(method -> isMethodAnnotatedWith(method, BEFORE))
                 .collect(Collectors.toList());
@@ -90,17 +87,18 @@ public class InitTests {
         Stream.of(testClass.getMethods())
                 .filter(method -> isMethodAnnotatedWith(method, TEST))
                 .forEach(testMethod -> {
-                    invokeTest(beforeMethods, afterMethods, testMethod, testClassAsObject);
+                    invokeTest(beforeMethods, afterMethods, testMethod, testClass);
                 });
     }
 
-    private static void invokeTest(final List<Method> before, final List<Method> after, final Method test, final Object inClass) {
+    private static void invokeTest(final List<Method> before, final List<Method> after, final Method test, final Class<?> testClass) {
         try {
+            Object inClass = testClass.getDeclaredConstructors()[0].newInstance();
             before.forEach(beforeMethod -> invokeStepsForTest(beforeMethod, test, inClass));
             invokeTestMethod(test, inClass);
             after.forEach(afterMethod -> invokeStepsForTest(afterMethod, test, inClass));
         } catch (Exception e) {
-
+            System.out.println("Some unexpected problems: " + e.getMessage());
         }
     }
 

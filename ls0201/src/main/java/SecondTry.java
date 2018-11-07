@@ -20,17 +20,26 @@ public class SecondTry {
         long mem3 = currentMemory();
         System.out.printf("Size of '%s': %s [%s].%n", "inner object", mem3 - mem2, RamUsageEstimator.sizeOf(innerObject));
 
-        CompositeInnerObject1 compositeInnerObject1 = new CompositeInnerObject1();
+        CompositeInnerObject1 compositeInnerObject1 = new CompositeInnerObject1(42);
         long mem4 = currentMemory();
-        System.out.printf("Size of '%s': %s [%s].%n", "composite with int", mem4 - mem3, RamUsageEstimator.sizeOf(compositeInnerObject1));
+        System.out.printf("Size of '%s': %s [%s].%n", "composite with int", mem4 - mem3, compositeInnerObject1.memory());
 
-        CompositeInnerObject2 compositeInnerObject2 = new CompositeInnerObject2();
+        CompositeInnerObject2 compositeInnerObject2 = new CompositeInnerObject2("Da ba di");
         long mem5 = currentMemory();
-        System.out.printf("Size of '%s': %s [%s].%n", "composite with string", mem5 - mem4, RamUsageEstimator.sizeOf(compositeInnerObject2));
+        compositeInnerObject2.memory();
+        System.out.printf("Size of '%s': %s [%s].%n", "composite with string", mem5 - mem4, compositeInnerObject2.memory());
 
         ArrayList<Integer> integers = new ArrayList<>(20);
         long mem6 = currentMemory();
         System.out.printf("Size of '%s': %s [%s].%n", "array list of int", mem6 - mem5, RamUsageEstimator.sizeOf(integers));
+
+        int int1 = 42;
+        long mem7 = currentMemory();
+        System.out.printf("Size of '%s': %s [%s].%n", "int", mem7 - mem6, RamUsageEstimator.sizeOf(int1));
+
+        Integer int2 = Integer.valueOf(42);
+        long mem8 = currentMemory();
+        System.out.printf("Size of '%s': %s [%s].%n", "Integer", mem8 - mem7, RamUsageEstimator.sizeOf(int2));
     }
 
     private static long currentMemory() throws InterruptedException {
@@ -44,10 +53,26 @@ public class SecondTry {
     }
 
     static class CompositeInnerObject1 {
-        private int first;
+        int first;
+
+        CompositeInnerObject1(int first) {
+            this.first = first;
+        }
+
+        long memory() {
+            return RamUsageEstimator.sizeOf(this);
+        }
     }
 
-    static class CompositeInnerObject2 {
-        private String second;
+    public static class CompositeInnerObject2 {
+        String second;
+
+        CompositeInnerObject2(String second) {
+            this.second = second;
+        }
+
+        long memory() {
+            return RamUsageEstimator.sizeOf(this);
+        }
     }
 }
