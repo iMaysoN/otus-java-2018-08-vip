@@ -13,6 +13,14 @@
         <maven.compiler.target>1.10</maven.compiler.target>
     </properties>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.carrotsearch</groupId>
+            <artifactId>java-sizeof</artifactId>
+            <version>0.0.3</version>
+        </dependency>
+    </dependencies>
+
     <build>
         <finalName>Agent</finalName>
         <plugins>
