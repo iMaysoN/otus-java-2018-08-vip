@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+@SuppressWarnings("WeakerAccess")
 public class CacheEngine<K, V> {
     private final int maxStoredElements;
     private final long lifeTimeOfElementMs;
@@ -70,6 +71,7 @@ public class CacheEngine<K, V> {
     public void close() {
         System.out.printf("CacheEngine closed. Statistic: added - %s, requested from cache - %s, requested but not found - %s.%n",
                 storedTotal, returnedFromCache, notFoundInCache);
+        timer.cancel();
     }
 
     private void logCache(String message, String... params) {
