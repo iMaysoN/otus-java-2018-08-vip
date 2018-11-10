@@ -9,12 +9,12 @@ public class Main {
         atm.store(100, 2);
         atm.store(50, 2);
         atm.store(10, 2);
-        atm.totalByFace();
+        atm.totalByDignity();
 
         atm.getMyMoneyBack(5200);
-        atm.totalByFace();
+        atm.totalByDignity();
         atm.getMyMoneyBack(600);
-        atm.totalByFace();
+        atm.totalByDignity();
 
         //Errors
         atm.getMyMoneyBack(1080);
