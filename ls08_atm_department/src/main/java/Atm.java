@@ -1,29 +1,36 @@
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("WeakerAccess")
 public class Atm {
     private Map<BanknoteDignity, Integer> moneyStorage;
+    private Map<BanknoteDignity, Integer> startedStorage;
     private List<BanknoteDignity> initialDignities;
 
     private AtmState atmState;
+    private String name;
 
     public Atm(List<BanknoteDignity> initialDignities) {
-        initBanknotDignities(initialDignities);
+        initBanknoteDignities(initialDignities);
     }
 
-    private void initBanknotDignities(List<BanknoteDignity> banknoteDignities) {
+    private void initBanknoteDignities(List<BanknoteDignity> banknoteDignities) {
         this.initialDignities = banknoteDignities;
-        this.moneyStorage = banknoteDignities.stream()
+        this.moneyStorage = initialDignities.stream()
                 .collect(Collectors.toMap(f -> f, f -> 0));
     }
 
-    public Atm(List<BanknoteDignity> initialDignities, Map<BanknoteDignity, Integer> settings) {
-        initBanknotDignities(initialDignities);
+    public Atm(List<BanknoteDignity> initialDignities, Map<BanknoteDignity, Integer> settings, String name) {
+        this.name = name;
+        initBanknoteDignities(initialDignities);
         for (BanknoteDignity dignity : settings.keySet()) {
             this.moneyStorage.put(dignity, settings.get(dignity));
         }
+        this.startedStorage = Map.copyOf(moneyStorage);
     }
 
     public AtmState getAtmState() {
@@ -38,9 +45,10 @@ public class Atm {
         if (atmState.equals(AtmState.PowerOn)) {
             if (!initialDignities.contains(dignity)) {
                 System.out.printf("Wrong dignity, ATM can't use this money: dignity - %s, count - %s. It will be returned.", dignity, count);
-            } else if (count <= 0){
+            } else if (count <= 0) {
                 System.out.println("Wrong count, can't be zero or less.");
             } else {
+                System.out.printf("Trying put money to %s ATM.%n", name);
                 moneyStorage.put(dignity, moneyStorage.get(dignity) + count);
             }
         } else {
@@ -110,5 +118,17 @@ public class Atm {
         } else {
             System.out.println("Sorry, ATM doesn't work currently.");
         }
+    }
+
+    public void restore() {
+        int wasMoneyTotal = totalStored();
+        for (Map.Entry<BanknoteDignity, Integer> banknote : startedStorage.entrySet()) {
+            this.moneyStorage.put(banknote.getKey(), banknote.getValue());
+        }
+        System.out.printf("ATM -=%s=- is restored banknote counts to first count - from `%s` to `%s`.%n", name, wasMoneyTotal, totalStored());
+    }
+
+    public String getName() {
+        return name;
     }
 }
