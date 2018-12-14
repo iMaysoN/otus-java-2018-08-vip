@@ -1,55 +1,40 @@
 import com.carrotsearch.sizeof.RamUsageEstimator;
 
 import java.util.ArrayList;
+import java.util.function.Supplier;
 
 public class SecondTry {
+    private static final int SIZE = 100_000;
+
+    private static <T> void generateAndPrint(final Supplier<T> supplier, final String comment) {
+        final Object[] objs = new Object[SIZE];
+        Runtime runtime = Runtime.getRuntime();
+        runtime.gc();
+        long memoryBefore = runtime.totalMemory() - runtime.freeMemory();
+        for (int i = 0; i < SIZE; i++) {
+            objs[i] = supplier.get();
+        }
+        runtime.gc();
+        long memoryAfter = runtime.totalMemory() - runtime.freeMemory();
+        System.out.println(String.format("%-30s\tSIZEOF(): %d/%d bytes%n",
+                comment,
+                Math.round((double) (memoryAfter - memoryBefore) / SIZE),
+                Math.round((double) (RamUsageEstimator.sizeOf(objs)) / SIZE)));
+    }
 
     public static void main(String[] args) throws InterruptedException {
-        long mem0 = currentMemory();
-        System.out.printf("Memory at the beginning: %s%n", mem0);
-
-        String simpleString = "";
-        long mem1 = currentMemory();
-        System.out.printf("Size of '%s': %s [%s].%n", "simple string", mem1 - mem0, RamUsageEstimator.sizeOf(simpleString));
-
-        String newString = new String("");
-        long mem2 = currentMemory();
-        System.out.printf("Size of '%s': %s [%s].%n", "new string", mem2 - mem1, RamUsageEstimator.sizeOf(newString));
-
-        InnerObject innerObject = new InnerObject();
-        long mem3 = currentMemory();
-        System.out.printf("Size of '%s': %s [%s].%n", "inner object", mem3 - mem2, RamUsageEstimator.sizeOf(innerObject));
-
-        CompositeInnerObject1 compositeInnerObject1 = new CompositeInnerObject1(42);
-        long mem4 = currentMemory();
-        System.out.printf("Size of '%s': %s [%s].%n", "composite with int", mem4 - mem3, compositeInnerObject1.memory());
-
-        CompositeInnerObject2 compositeInnerObject2 = new CompositeInnerObject2("Da ba di");
-        long mem5 = currentMemory();
-        compositeInnerObject2.memory();
-        System.out.printf("Size of '%s': %s [%s].%n", "composite with string", mem5 - mem4, compositeInnerObject2.memory());
-
-        ArrayList<Integer> integers = new ArrayList<>(20);
-        long mem6 = currentMemory();
-        System.out.printf("Size of '%s': %s [%s].%n", "array list of int", mem6 - mem5, RamUsageEstimator.sizeOf(integers));
-
-        int int1 = 42;
-        long mem7 = currentMemory();
-        System.out.printf("Size of '%s': %s [%s].%n", "int", mem7 - mem6, RamUsageEstimator.sizeOf(int1));
-
-        Integer int2 = Integer.valueOf(42);
-        long mem8 = currentMemory();
-        System.out.printf("Size of '%s': %s [%s].%n", "Integer", mem8 - mem7, RamUsageEstimator.sizeOf(int2));
+        generateAndPrint(String::new, "Empty string");
+        generateAndPrint(() -> "", "Empty string");
+        generateAndPrint(InnerObject::new, "Inner object");
+        generateAndPrint(() -> 52, "simple int");
+        generateAndPrint(() -> true, "boolean");
+        generateAndPrint(() -> false, "boolean");
+        generateAndPrint(() -> new CompositeInnerObject1(52), "Composite object 1");
+        generateAndPrint(() -> new CompositeInnerObject2("my tests"), "Composite object 2");
+        generateAndPrint(() -> new ArrayList<Integer>(20), "Array of Integer objects");
     }
 
-    private static long currentMemory() throws InterruptedException {
-        System.gc();
-        Thread.sleep(10);
-        Runtime runtime = Runtime.getRuntime();
-        return runtime.totalMemory() - runtime.freeMemory();
-    }
-
-    static class InnerObject {
+    private static class InnerObject {
     }
 
     static class CompositeInnerObject1 {
