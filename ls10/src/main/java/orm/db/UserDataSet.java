@@ -37,13 +37,14 @@ public class UserDataSet extends DataSet {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UserDataSet that = (UserDataSet) o;
-        return age == that.age &&
-                name.equals(that.name);
+        return age == that.age
+                && name.equals(that.name)
+                && id == that.getId();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, age);
+        return Objects.hash(id, name, age);
     }
 
     @Override
