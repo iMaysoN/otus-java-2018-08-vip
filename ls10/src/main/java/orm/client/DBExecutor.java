@@ -8,6 +8,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 public class DBExecutor implements AutoCloseable {
@@ -25,16 +27,14 @@ public class DBExecutor implements AutoCloseable {
         }
         final String insertStatement = "insert into orm (%s) values (%s)";
         final ArrayList<String> fieldNames = new ArrayList<>();
-        final ArrayList<String> fieldValues = new ArrayList<>();
         final Set<Field> fields = cache.getFieldsFromClass(dataSet.getClass());
         for (final Field field : fields) {
             field.setAccessible(true);
             fieldNames.add(field.getName());
-            fieldValues.add("?");
         }
         final String INSERT = String.format(insertStatement,
                 String.join(", ", fieldNames),
-                String.join(", ", fieldValues));
+                Stream.generate(() -> "?").limit(fieldNames.size()).collect(Collectors.joining(", ")));
         try (final PreparedStatement preparedStatement = dbClient.prepareStatement(INSERT)) {
             int i = 0;
             for (final Field field : fields) {
