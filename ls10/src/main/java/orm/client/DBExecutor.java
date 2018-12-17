@@ -1,12 +1,13 @@
 package orm.client;
 
 import orm.db.DataSet;
-import orm.db.UserDataSet;
 
 import java.lang.reflect.Field;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Set;
 
 
 public class DBExecutor implements AutoCloseable {
@@ -18,20 +19,33 @@ public class DBExecutor implements AutoCloseable {
         this.cache = new Cache();
     }
 
-    public <DS extends DataSet> void save(DS dataSet) throws SQLException {
+    public <DS extends DataSet> void save(final DS dataSet) throws SQLException, IllegalAccessException {
         if (dataSet == null) {
             throw new RuntimeException("Data set can't be null");
         }
-        final String insertStatement = "insert into orm (id, name, age) values (?, ?, ?)";
-        try (final PreparedStatement preparedStatement = dbClient.prepareStatement(insertStatement)) {
-            preparedStatement.setLong(1, dataSet.getId());
-            preparedStatement.setString(2, ((UserDataSet) dataSet).getName());
-            preparedStatement.setInt(3, ((UserDataSet) dataSet).getAge());
+        final String insertStatement = "insert into orm (%s) values (%s)";
+        final ArrayList<String> fieldNames = new ArrayList<>();
+        final ArrayList<String> fieldValues = new ArrayList<>();
+        final Set<Field> fields = cache.getFieldsFromClass(dataSet.getClass());
+        for (final Field field : fields) {
+            field.setAccessible(true);
+            fieldNames.add(field.getName());
+            fieldValues.add("?");
+        }
+        final String INSERT = String.format(insertStatement,
+                String.join(", ", fieldNames),
+                String.join(", ", fieldValues));
+        try (final PreparedStatement preparedStatement = dbClient.prepareStatement(INSERT)) {
+            int i = 0;
+            for (final Field field : fields) {
+                i++;
+                preparedStatement.setObject(i, field.get(dataSet));
+            }
             preparedStatement.executeUpdate();
         }
     }
 
-    public <DS extends DataSet> DS load(final long id, final Class<DS> clazz) throws SQLException, ReflectiveOperationException {
+    public <DS extends DataSet> DS load(final long id, final Class<DS> clazz) {
         if (clazz == null) {
             throw new RuntimeException("Class can't be null");
         } else {
