@@ -1,12 +1,14 @@
 package orm.client;
 
+import orm.db.DBHelper;
+
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Cache {
-    private static String INSERT_BLUEPRINT = "insert into orm (%s) values (%s)";
+    private static String INSERT_BLUEPRINT = "insert into %s (%s) values (%s)";
 
     private Map<Class, Set<Field>> cacheMap;
     private Map<Class, String> cachedInsertRequests;
@@ -37,6 +39,7 @@ public class Cache {
             fieldNames.add(field.getName());
         }
         final String insert = String.format(INSERT_BLUEPRINT,
+                DBHelper.dbName,
                 String.join(", ", fieldNames),
                 Stream.generate(() -> "?").limit(fieldNames.size()).collect(Collectors.joining(", ")));
         cachedInsertRequests.put(object.getClass(), insert);

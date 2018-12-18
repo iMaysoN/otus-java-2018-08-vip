@@ -1,5 +1,6 @@
 package orm.client;
 
+import orm.db.DBHelper;
 import orm.db.DataSet;
 
 import java.lang.reflect.Field;
@@ -38,7 +39,7 @@ public class DBExecutor implements AutoCloseable {
         if (clazz == null) {
             throw new RuntimeException("Class can't be null");
         } else {
-            final String selectStatement = "select * from orm where id=?";
+            final String selectStatement = "select * from " + DBHelper.dbName + " where id=?";
             try (final PreparedStatement preparedStatement = dbClient.prepareStatement(selectStatement)) {
                 final DS dataSet = clazz.getConstructor().newInstance();
                 preparedStatement.setLong(1, id);
