@@ -6,10 +6,6 @@ import java.lang.reflect.Field;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 
 public class DBExecutor implements AutoCloseable {
@@ -25,20 +21,13 @@ public class DBExecutor implements AutoCloseable {
         if (dataSet == null) {
             throw new RuntimeException("Data set can't be null");
         }
-        final String insertStatement = "insert into orm (%s) values (%s)";
-        final ArrayList<String> fieldNames = new ArrayList<>();
-        final Set<Field> fields = cache.getFieldsFromClass(dataSet.getClass());
-        for (final Field field : fields) {
-            field.setAccessible(true);
-            fieldNames.add(field.getName());
-        }
-        final String INSERT = String.format(insertStatement,
-                String.join(", ", fieldNames),
-                Stream.generate(() -> "?").limit(fieldNames.size()).collect(Collectors.joining(", ")));
-        try (final PreparedStatement preparedStatement = dbClient.prepareStatement(INSERT)) {
+        try (final PreparedStatement preparedStatement = dbClient
+                .prepareStatement(
+                        cache.getInsertRequestForObject(dataSet))) {
             int i = 0;
-            for (final Field field : fields) {
+            for (final Field field : cache.getFieldsFromClass(dataSet.getClass())) {
                 i++;
+                field.setAccessible(true);
                 preparedStatement.setObject(i, field.get(dataSet));
             }
             preparedStatement.executeUpdate();
