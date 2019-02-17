@@ -2,6 +2,7 @@ package orm.data;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -23,7 +24,6 @@ public class User {
     private Set<Phone> phones;
 
     public User() {
-
     }
 
     public User(String name, int age) {
@@ -32,8 +32,10 @@ public class User {
         this.age = age;
     }
 
-    public User(String name, int age, Phone phone, Address address) {
-        this(name, age, Set.of(phone), address);
+    public User(String name, int age, String phone, String address) {
+        this(name, age);
+        this.phones = Set.of(new Phone(phone, this));
+        this.address = new Address(address);
     }
 
     public User(String name, int age, Set<Phone> phones, Address address) {
@@ -97,5 +99,29 @@ public class User {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        User user = (User) o;
+
+        return (id == user.id)
+                && (age == user.age)
+                && Objects.equals(name, user.name)
+                && Objects.equals(address, user.address)
+                && phones != null ? phones.equals(user.phones) : user.phones == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (id ^ (id >>> 32));
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + age;
+        result = 31 * result + (address != null ? address.hashCode() : 0);
+        result = 31 * result + (phones != null ? phones.hashCode() : 0);
+        return result;
     }
 }

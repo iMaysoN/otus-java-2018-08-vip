@@ -1,6 +1,7 @@
 package orm.data;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "phone")
@@ -12,7 +13,8 @@ public class Phone {
     @Column(name = "number")
     private String number;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     public Phone() {
@@ -20,6 +22,11 @@ public class Phone {
 
     public Phone(String number) {
         this.number = number;
+    }
+
+    public Phone(String number, User user) {
+        this.number = number;
+        this.user = user;
     }
 
     public void setUser(User user) {
@@ -44,5 +51,19 @@ public class Phone {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Phone phone = (Phone) o;
+        return Objects.equals(id, phone.id) && Objects.equals(number, phone.number);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

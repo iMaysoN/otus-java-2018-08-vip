@@ -1,6 +1,7 @@
 package orm.data;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "address")
@@ -12,9 +13,6 @@ public class Address {
 
     @Column(name = "street")
     private String street;
-//    @OneToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE })
-//    @JoinColumn(name = "user_id")
-//    private User user;
 
     public Address() {
     }
@@ -23,16 +21,15 @@ public class Address {
         this.street = street;
     }
 
-//    public void setUser(User user) {
-//        this.user = user;
-//    }
+    public long getId() {
+        return id;
+    }
 
-//    public User getUser() {
-//        return user;
-//    }
+    public void setId(long id) {
+        this.id = id;
+    }
 
     @Override
-    @Transient
     public String toString() {
         return "Address{" +
                 "id=" + id +
@@ -40,11 +37,21 @@ public class Address {
                 '}';
     }
 
-    public long getId() {
-        return id;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Address address = (Address) o;
+
+        if (id != address.id) return false;
+        return Objects.equals(street, address.street);
     }
 
-    public void setId(long id) {
-        this.id = id;
+    @Override
+    public int hashCode() {
+        int result = (int) (id ^ (id >>> 32));
+        result = 31 * result + (street != null ? street.hashCode() : 0);
+        return result;
     }
 }

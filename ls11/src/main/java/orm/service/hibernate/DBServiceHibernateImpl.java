@@ -62,13 +62,13 @@ public class DBServiceHibernateImpl implements DBService {
     }
 
     @Override
-    public User readByName(String name) {
-        return null;
-    }
-
-    @Override
-    public List<User> readAll() {
-        return null;
+    public Phone readPhone(long id) {
+        try (Session session = sessionFactory.openSession()) {
+            return session.get(Phone.class, id);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            throw new RuntimeException(ex);
+        }
     }
 
     @Override

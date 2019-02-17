@@ -1,5 +1,6 @@
 package orm.service;
 
+import orm.data.Phone;
 import orm.data.User;
 
 import java.util.List;
@@ -11,7 +12,5 @@ public interface DBService extends AutoCloseable {
 
     User read(long id);
 
-    User readByName(String name);
-
-    List<User> readAll();
+    Phone readPhone(long id);
 }

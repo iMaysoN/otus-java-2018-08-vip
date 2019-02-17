@@ -1,3 +1,4 @@
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -7,6 +8,8 @@ import orm.data.Phone;
 import orm.data.User;
 import orm.service.DBService;
 import orm.service.hibernate.DBServiceHibernateImpl;
+
+import java.util.Set;
 
 public class TestOrm {
     private static DBService hibernate;
@@ -22,11 +25,18 @@ public class TestOrm {
             "spider-man, 20, NY any-roof, 111-call-spidy",
             "batman, 50, SPB Nevskaya, 321-123"})
     public void commonOrmTest(final String name, final int age, final String address, final String phone) {
-        final User uds = new User(name, age, new Phone(phone), new Address(address));
+        final User uds = new User(name, age, phone, address);
         long id = hibernate.save(uds);
         System.out.println("  TO DB: " + uds.toString());
+        Phone phoneDb = hibernate.readPhone(uds.getPhones().iterator().next().getId());
+        System.out.println("From DB Phone: " + phoneDb);
         User udl = hibernate.read(id);
         System.out.println("From DB: " + udl);
         Assertions.assertEquals(uds, udl);
+    }
+
+    @AfterAll
+    public static void dismiss() throws Exception {
+        hibernate.close();
     }
 }
