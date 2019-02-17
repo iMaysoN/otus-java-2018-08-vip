@@ -11,6 +11,4 @@ public interface DBService extends AutoCloseable {
     long save(User dataSet);
 
     User read(long id);
-
-    Phone readPhone(long id);
 }

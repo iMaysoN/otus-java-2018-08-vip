@@ -112,7 +112,7 @@ public class User {
                 && (age == user.age)
                 && Objects.equals(name, user.name)
                 && Objects.equals(address, user.address)
-                && phones != null ? phones.equals(user.phones) : user.phones == null;
+                && phones != null ? phones.stream().anyMatch(phone -> user.phones.contains(phone)) : user.phones == null;
     }
 
     @Override

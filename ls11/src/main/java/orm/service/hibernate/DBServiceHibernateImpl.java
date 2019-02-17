@@ -62,16 +62,6 @@ public class DBServiceHibernateImpl implements DBService {
     }
 
     @Override
-    public Phone readPhone(long id) {
-        try (Session session = sessionFactory.openSession()) {
-            return session.get(Phone.class, id);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            throw new RuntimeException(ex);
-        }
-    }
-
-    @Override
     public void close() throws Exception {
 
     }
