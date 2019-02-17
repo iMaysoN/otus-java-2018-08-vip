@@ -52,6 +52,7 @@ public class DBExecutor implements AutoCloseable {
                         field.set(dataSet, fieldValue);
                     }
                 }
+                resultSet.close();
                 return dataSet;
             } catch (Exception e) {
                 return null;

@@ -10,7 +10,8 @@ public class DBHelper {
                     "(" +
                     "id bigint(20) NOT NULL auto_increment,%n" +
                     "name varchar(255),%n" +
-                    "age int(3)" +
+                    "age int(3),%n" +
+                    "address varchar(255),%n" +
                     ")",
             dbName);
 
