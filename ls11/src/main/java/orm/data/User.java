@@ -1,12 +1,11 @@
 package orm.data;
 
 import javax.persistence.*;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 public class User {
     @Id
     @GeneratedValue
@@ -14,6 +13,8 @@ public class User {
 
     @Column(name = "name")
     private String name;
+    @Column(name = "password")
+    private String password;
     @Column(name = "age")
     private int age;
 
@@ -26,9 +27,17 @@ public class User {
     public User() {
     }
 
+    public User(String name, String password) {
+        this.setId(-1);
+        this.name = name;
+        this.password = password;
+        this.age = 18;
+    }
+
     public User(String name, int age) {
         this.setId(-1);
         this.name = name;
+        this.password = "password";
         this.age = age;
     }
 

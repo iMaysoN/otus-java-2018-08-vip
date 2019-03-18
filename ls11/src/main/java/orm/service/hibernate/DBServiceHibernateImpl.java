@@ -13,6 +13,10 @@ import orm.data.Phone;
 import orm.data.User;
 import orm.service.DBService;
 
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.List;
 
 public class DBServiceHibernateImpl implements DBService {
@@ -62,7 +66,23 @@ public class DBServiceHibernateImpl implements DBService {
     }
 
     @Override
-    public void close() throws Exception {
+    public <T> List<T> getAll(Class<T> clazz) {
+        try (Session session = sessionFactory.openSession()) {
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<T> cq = cb.createQuery(clazz);
+            Root<T> rootEntry = cq.from(clazz);
+            CriteriaQuery<T> all = cq.select(rootEntry);
+            TypedQuery<T> allQuery = session.createQuery(all);
 
+            return allQuery.getResultList();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            throw new RuntimeException(ex);
+        }
+    }
+
+    @Override
+    public void close() throws Exception {
+        sessionFactory.close();
     }
 }
