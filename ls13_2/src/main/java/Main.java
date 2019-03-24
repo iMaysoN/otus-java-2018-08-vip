@@ -1,34 +1,47 @@
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 public class Main {
-
     public static void main(String[] args) {
+        final AtomicInteger counter = new AtomicInteger(0);
         Function<String, Runnable> func = threadName -> new Runnable() {
-            private String message = threadName + ": ";
-            private int counter = 0;
+            private String message = "";
             private int mode = 1;
 
             @Override
             public void run() {
                 while (true) {
-                    if (counter == 0) {
-                        counter = counter + mode;
-                        message = message + counter;
-                    } else {
-                        counter = counter + mode;
-                        message = String.join(", ", message, String.valueOf(counter));
-                    }
-                    if (counter == 10) mode = -1;
-                    if (counter == 1) mode = 1;
+                    if (threadName.equals("Поток 1")) {
+                        int currentValue = counter.get();
+                        if (currentValue == 10) {
+                            mode = -1;
+                        } else if (currentValue == 1) {
+                            mode = 1;
+                        }
+                        currentValue = mode > 0
+                                ? currentValue + 1
+                                : currentValue - 1;
 
-                    System.out.println(message);
-                    sleep(1000);
+                        message = message.isEmpty()
+                                ? String.valueOf(currentValue)
+                                : String.join(", ", message, String.valueOf(currentValue));
+                        System.out.println(threadName + ": " + message);
+                        counter.set(currentValue);
+                        sleep(1000);
+                    } else if (threadName.equals("Поток 2")) {
+                        int currentValue = counter.get();
+                        if (currentValue != 0 && !message.endsWith(String.valueOf(currentValue))) {
+                            message = message.isEmpty()
+                                    ? String.valueOf(currentValue)
+                                    : String.join(", ", message, String.valueOf(currentValue));
+                            System.out.println(threadName + ": " + message);
+                        }
+                    }
                 }
             }
         };
 
         new Thread(func.apply("Поток 1")).start();
-        sleep(100);
         new Thread(func.apply("Поток 2")).start();
     }
 
