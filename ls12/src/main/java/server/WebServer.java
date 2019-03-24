@@ -13,7 +13,6 @@ import servlets.AdminServlet;
 import servlets.AuthFilterImpl;
 import servlets.UserServlet;
 
-import javax.servlet.Servlet;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;

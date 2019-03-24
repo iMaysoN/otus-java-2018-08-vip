@@ -1,0 +1,99 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Otus HW 14.2</title>
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+    <link type="text/css" rel="stylesheet" th:href="@{css/materialize.min.css}" media="screen,projection"/>
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.7/angular.js"></script>
+    <head>
+<body onload="init_modal()">
+<nav class="nav-extended">
+    <div class="nav-wrapper">
+        <a href="#" class="brand-logo center">
+            <img class="responsive-img" th:src="@{image/otus.svg}">
+            HW 14.2 - DI</a>
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+            <a class="waves-effect waves-light" th:href="@{logout}">
+                <i class="material-icons right">exit_to_app</i>
+            </a>
+        </ul>
+    </div>
+    <div class="nav-content">
+        <button data-target="modal1"
+                class="btn-floating modal-trigger btn-large halfway-fab waves-effect waves-light teal left">
+            <i class="material-icons left">add</i>
+        </button>
+    </div>
+</nav>
+
+<div id="container" class="container" ng-app="UserManagement" ng-controller="UserController">
+    <div id="modal1" class="modal">
+        <div class="modal-content">
+            <form ng-submit="submitUser()" enctype="multipart/form-data">
+                <span class="card-title">Введите имя и фамилию пользователя</span>
+                <div class="card">
+                    <div class="card-content">
+                        <table border="0">
+                            <tr>
+                                <td>№</td>
+                                <td>{{userForm.id}}</td>
+                            </tr>
+                            <tr>
+                                <td>Имя</td>
+                                <td><input type="text" ng-model="userForm.name"/></td>
+                            </tr>
+                            <tr>
+                                <td>Фамилия</td>
+                                <td><input type="text" ng-model="userForm.surname"/></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <button class="btn waves-effect waves-light modal-close" type="submit"
+                                            name="action">Отправить
+                                        <i class="material-icons right">send</i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <br/>
+    <table border="1">
+        <tr>
+            <th>#</th>
+            <th>Имя</th>
+            <th>Фамилия</th>
+            <th></th>
+            <th></th>
+        </tr>
+        <!-- $scope.users -->
+        <tr ng-repeat="user in users">
+            <td> {{ user.id }}</td>
+            <td> {{ user.name }}</td>
+            <td> {{ user.surname }}</td>
+            <td>
+                <button data-target="modal1" class="btn-floating modal-trigger btn-small waves-effect waves-light">
+                    <i ng-click="editUser(user)" class="small material-icons">edit</i>
+                </button>
+            </td>
+            <td>
+                <a class="btn-floating btn-small waves-effect waves-light">
+                    <i ng-click="deleteUser(user)" class="small material-icons">delete</i>
+                </a>
+            </td>
+        </tr>
+    </table>
+</div>
+<!--JavaScript at end of body for optimized loading-->
+<script type="text/javascript" th:src="@{scripts/lib/materialize.min.js}"></script>
+<script th:src="@{scripts/controller/main.js}"></script>
+</body>
+</html>
